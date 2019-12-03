@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.st.crm.mapper.UserMapper">
+  
+  	<resultMap type="com.st.crm.pojo.User" id="user">
+  	
+  		<id column="id" property="id"/>
+  		<result column="username" property="username"/>
+  		<result column="password" property="password"/>
+  		<result column="realname" property="realname"/>
+  		<result column="phone" property="phone"/>
+  		<result column="email" property="email"/>
+  		<result column="status" property="status"/>
+  		
+  		<collection property="roles" ofType="com.st.crm.pojo.SysRole">
+  			<id column="role_id" property="id"/>
+	  		<result column="role" property="role"/>
+	  		<result column="dscb" property="dscb"/>
+	  		
+	  		<collection property="premissions" ofType="com.st.crm.pojo.SysPremission">
+	  			<id column="premission_id" property="id"/>
+		  		<result column="url" property="url"/>
+		  		<result column="type" property="type"/>
+		  		<result column="name" property="name"/>
+		  		<result column="premission" property="premission"/>
+		  		<result column="parent" property="parent"/>
+	  		</collection>
+  		</collection>
+  	</resultMap>
+  
+  	  <select id="select"
+  	  	parameterType="com.st.crm.pojo.User"
+  	  	resultMap="user">
+  	  	
+  	  	select `user`.*, 
+			sys_role.id as role_id, sys_role.role, sys_role.dscb,
+			sys_premission.id as premission_id, sys_premission.url,
+			sys_premission.type, sys_premission.`name`, 
+			sys_premission.premission, sys_premission.parent
+		from `user`
+		left JOIN sys_user_role on `user`.id = sys_user_role.user_id
+		LEFT JOIN sys_role on sys_user_role.role_id = sys_role.id
+		LEFT JOIN sys_role_premission on sys_role.id = sys_role_premission.role_id
+		LEFT JOIN sys_premission on sys_role_premission.premission_id = sys_premission.id
+		
+		where username =#{username} and `password`=#{password}
+  	  	
+		group by sys_premission.id
+  	  	
+  	  </select>
+  	  
+  	  
+	<select id="selectAll" 
+		resultType="com.st.crm.pojo.User">
+		select * from user
+	</select>
+	
+	<insert id="insert"
+		parameterType="com.st.crm.pojo.User">
+		
+		insert into user 
+		(username, password, realname, phone, email)
+		values
+		(#{username}, #{password}, #{realname}, #{phone}, #{email})
+	</insert>
+	
+	<select id="selectById"
+		resultType="com.st.crm.pojo.User">
+	
+		select * from user where id=#{id}
+	</select>
+	
+	<select id="selectRole"
+		resultType="map">
+		select * 
+		from sys_user_role
+		where sys_user_role.user_id = #{user_id}
+	</select>
+</mapper>

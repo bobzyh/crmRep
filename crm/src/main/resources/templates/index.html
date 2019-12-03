@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>基于RBAC的CRM</title>
+  <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo">基于RBAC的CRM</div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item"><a href="">控制台</a></li>
+      <li class="layui-nav-item"><a href="">商品管理</a></li>
+      <li class="layui-nav-item"><a href="">用户</a></li>
+      <li class="layui-nav-item">
+        <a href="javascript:;">其它系统</a>
+        <dl class="layui-nav-child">
+          <dd><a href="">邮件管理</a></dd>
+          <dd><a href="">消息管理</a></dd>
+          <dd><a href="">授权管理</a></dd>
+        </dl>
+      </li>
+    </ul>
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+          ${user.realname}
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="">退了</a></li>
+    </ul>
+  </div>
+  
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+      <#list user.roles as role>
+		<#list role.premissions as premission>
+		<!-- 先生成一级菜单 -->
+			<#if !premission.parent??>
+				<li class="layui-nav-item layui-nav-itemed">
+				<a href="javascript:;" onclick="showView('${premission.url}')">${premission.name}</a>
+				
+				<!-- 生成二级菜单 -->
+					<dl class="layui-nav-child">
+						<#list  user.roles as role_son >
+							<#list role_son.premissions as premission_son>
+								<#if premission_son.parent?? && premission.id = premission_son.parent && premission_son.type=1>
+								<dd><a href="javascript:;" onclick="showView('${premission_son.url}')">${premission_son.name}</a></dd>
+								</#if>
+							</#list>
+						</#list>
+					</dl>
+				</li>
+			</#if>
+		</#list>
+	</#list>
+        
+      </ul>
+    </div>
+  </div>
+  
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <div style="padding: 15px;" class="view">内容主体区域</div>
+  </div>
+  
+  <div class="layui-footer">
+    <!-- 底部固定区域 -->
+    © layui.com - 底部固定区域
+  </div>
+</div>
+<script src="../layui/layui.js"></script>
+<script>
+//JavaScript代码区域
+layui.use('element', function(){
+  var element = layui.element;
+  // $ 不使用var, 就变成了全局变量
+  $=layui.$;
+  
+});
+
+function showView(url){
+	$.ajax({
+		url : url,
+		data : {},
+		type : "get",
+		dataType : "html",
+		success : function(data){
+			
+			$(".view").html(data);
+		},
+		error : function(){
+			alert("error")
+		}
+	});
+	
+	
+}
+	
+</script>
+</body>
+</html>
+

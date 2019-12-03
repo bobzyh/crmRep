@@ -1,0 +1,107 @@
+ 添加权限
+<form class="layui-form" action="">
+	<div class="layui-form-item">
+		<label class="layui-form-label">url</label>
+		<div class="layui-input-block">
+			<input type="text" name="url" required lay-verify="required"
+				placeholder="请输入url" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">类型</label>
+		<div class="layui-input-inline">
+			<select name="type" lay-verify="required">
+		        <option value="1">菜单</option>
+		        <option value="2">按钮</option>
+			</select>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">权限名</label>
+		<div class="layui-input-inline">
+			<input type="text" name="name" required lay-verify="required"
+				placeholder="请输入权限名" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">premission</label>
+		<div class="layui-input-inline">
+			<input type="text" name="premission" required lay-verify="required"
+				placeholder="请输入premission" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">父权限</label>
+		<div class="layui-input-inline">
+			<select name="parent" lay-verify="required">
+		        <option value="1">菜单</option>
+		        <option value="2">按钮</option>
+			</select>
+		</div>
+	</div>
+	<div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+
+</form>
+
+<script type="text/javascript">
+
+	//Demo
+	layui.use('form', function() {
+		var form = layui.form;
+
+		//监听提交
+		form.on('submit(formDemo)', function(data) {
+			
+			$.ajax({
+				url : "premission/add",
+				data : data.field,
+				type : "post",
+				dataType : "JSON",
+				success : function(data){
+					if (data.res>0){
+						alert("添加成功")
+						showView('premission/index')
+					} else {
+						alert("添加失败")
+					}
+				},
+				error : function(){
+					
+				}
+			});
+			
+			return false;
+		});
+		
+		// 获取所有的一级权限
+		$.ajax({
+			url : "premission/getAll",
+			data : {},
+			type : "post",
+			dataType : "json",
+			success : function(data){
+				var html = "<option value='0'>选择父权限</option>";
+				$.each(data.data, function(index, item){
+					if (item.parent == null){
+						html += "<option value=\""+item.id+"\">"+item.name+"</option>";
+					}
+				})
+				
+				$("select[name='parent']").html(html);
+				form.render(); //更新全部
+			},
+			error : function(){
+				
+			}
+			
+		});
+		
+		form.render(); //更新全部
+
+	});
+</script>

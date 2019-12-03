@@ -1,0 +1,81 @@
+<h1>添加用户</h1>
+
+<form class="layui-form" action="">
+	<div class="layui-form-item">
+		<label class="layui-form-label">账号</label>
+		<div class="layui-input-inline">
+			<input type="text" name="username" required lay-verify="required"
+				placeholder="请输入账号" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">密码</label>
+		<div class="layui-input-inline">
+			<input type="password" name="password" required lay-verify="required"
+				placeholder="请输入密码" autocomplete="off" class="layui-input">
+		</div>
+		<div class="layui-form-mid layui-word-aux">辅助文字</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">真实姓名</label>
+		<div class="layui-input-inline">
+			<input type="text" name="realname" required lay-verify="required"
+				placeholder="请输入姓名" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">电话</label>
+		<div class="layui-input-inline">
+			<input type="text" name="phone" required lay-verify="required"
+				placeholder="请输入姓名" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">邮箱</label>
+		<div class="layui-input-inline">
+			<input type="text" name="email" required lay-verify="required"
+				placeholder="请输入姓名" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+
+
+	<div class="layui-form-item">
+		<div class="layui-input-block">
+			<button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+			<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		</div>
+	</div>
+</form>
+
+<script>
+	//Demo
+	layui.use('form', function() {
+		var form = layui.form;
+
+		//监听提交
+		form.on('submit(formDemo)', function(data) {
+
+			// ajax提交
+			$.ajax({
+				url : "user/add",
+				data : data.field,
+				type : "POST",
+				dataType : "JSON",
+				success : function(data){
+					
+					if (data.res > 0){
+						alert("添加成功")
+						showView("user/index")
+					} else {
+						alert("添加失败")
+					}
+				},
+				error : function(){
+					alert("error")
+				}
+			});
+
+			return false;
+		});
+	});
+</script>

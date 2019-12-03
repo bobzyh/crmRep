@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.st.crm.mapper.PremissionMapper">
+  
+	<select id="selectAll"
+		resultType="com.st.crm.pojo.SysPremission">
+		select * from sys_premission
+	</select>
+	
+	<insert id="insert" parameterType="com.st.crm.pojo.SysPremission">
+	
+		insert into sys_premission
+		(url, type, name, premission, parent)
+		value(#{url}, #{type}, #{name}, #{premission}, 
+		<if test="parent==0">null</if>
+		<if test="parent!=0">#{parent}</if>
+		)
+	</insert>
+</mapper>

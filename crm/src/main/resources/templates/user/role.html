@@ -1,0 +1,101 @@
+<h1>设置用户角色</h1>
+${user.username}
+
+<div class="layui-btn-container">
+  <button type="button" class="layui-btn" lay-demotransferactive="getData">保存</button>
+</div>
+ 
+<div id="test7" class="demo-transfer"></div>
+
+<script>
+layui.use(['transfer', 'layer', 'util'], function(){
+  var $ = layui.$
+  ,transfer = layui.transfer
+  ,layer = layui.layer
+  ,util = layui.util;
+
+  
+
+//实例调用
+  transfer.render({
+    elem: '#test7'
+    ,data: []
+    ,id: 'key123' //定义唯一索引
+    ,title: ["可选角色", "当前角色"]
+  })
+  //批量办法定事件
+  util.event('lay-demoTransferActive', {
+    getData: function(othis){
+      var getData = transfer.getData('key123'); //获取右侧数据
+      layer.alert(JSON.stringify(getData)); 
+      
+      // 通过Ajax传递到服务器
+      /*
+      	1. 把右侧的 提交到服务器
+      	2. 先全部删除指定用户的角色
+      	3. 再重新添加新的角色.
+      */
+    }
+    
+  });
+  
+  // ajax 获取所有的角色
+  $.ajax({
+	  url : "role/index",
+	  data : {},
+	  type : "post",
+	  dataType : "JSON",
+	  success : function(roleList){
+		  
+		 
+		  
+		  
+		  // 获取当前用户的角色, 并且移动到右边
+		  $.ajax({
+			  url : "user/role/get",
+			  data : {"id": ${user.id}},
+			  type : "post",
+			  dataType : "JSON",
+			  success : function(data){
+				  var roles = new Array();
+				  
+				  $.each(data, function(index, item){
+					  roles.push(item.role_id);
+				  });
+				  
+				  transfer.reload('key123', {
+					  data : roleList.data
+					  ,value : roles
+					  ,parseData: function(res){
+						    return {
+						      "value": res.id //数据值
+						      ,"title": res.dscb //数据标题
+						      ,"disabled": ""  //是否禁用
+						      ,"checked": "" //是否选中
+						    }
+						  }
+				  }); 
+				  
+				  
+			  },
+			  error : function(){
+				  
+			  }
+		  });
+		  
+	  },
+	  error : function(){
+		  
+	  }
+	  
+  });
+  
+  
+  
+//可以重载所有基础参数
+//  transfer.reload('demo1', {
+//    title: ['新列表1', '新列表2']
+//  });
+  
+});
+</script>
